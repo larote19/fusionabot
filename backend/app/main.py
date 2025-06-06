@@ -19,3 +19,14 @@ app.add_middleware(
 @app.get("/health", tags=["health"])
 async def health_check():
     return {"status": "ok", "service": "fusionabot"}
+
+from .services.mongo import db
+
+@app.get("/db-status", tags=["health"])
+async def db_status():
+    try:
+        # Verifica si puedes listar las colecciones
+        collections = await db.list_collection_names()
+        return {"status": "ok", "collections": collections}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
